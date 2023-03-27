@@ -14,14 +14,19 @@ export default function MapScreen() {
     const [location, setLocation] = useState<LatLng | null>(null);
     const [destination, setDestination] = useState<LatLng | null>(null);
     const [showDirections, setShowDirections] = useState<boolean>(false);
+    const [permissionGranted, setPermissionGranted] = useState<boolean>(false);
     const MapRef = useRef<MapView>(null);
 
     useEffect(() => {
         const getCurrentPosition = async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== "granted") {
-                alert("Permission to access location was denied");
-                return;
+
+            if (!permissionGranted) {
+                let { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== "granted") {
+                    alert("Permission to access location was denied");
+                    return;
+                }
+                setPermissionGranted(true);
             }
 
             let { coords } = await Location.getCurrentPositionAsync({});
@@ -29,7 +34,18 @@ export default function MapScreen() {
         }
 
         getCurrentPosition();
+        // setInterval(() => {
+        //     getCurrentPosition();
+        //     compareNearbyPoints(location, destination) && console.log("You are near the destination");
+        // } , 1000);
     }, []);
+
+    function compareNearbyPoints(point1: any, point2: any) {
+        if (point1 === null || point2 === null) return false;
+        const distance = Math.sqrt(Math.pow(point1?.latitude - point2?.latitude, 2) + Math.pow(point1?.longitude - point2?.longitude, 2));
+        alert(distance);
+        return distance < 1000;
+    }
 
     if (!location) {
         return <View style={styles.container}>
@@ -77,6 +93,11 @@ export default function MapScreen() {
                 <Marker
                     title="You are here"
                     pinColor="blue"
+                    draggable={true}
+                    onDragEnd={(e) => {
+                        setLocation(e.nativeEvent.coordinate);
+                        setShowDirections(false);
+                    }}
                     coordinate={{
                         latitude: location.latitude,
                         longitude: location.longitude,
@@ -101,6 +122,7 @@ export default function MapScreen() {
                     apikey={GOOGLE_MAPS_API_KEY}
                     strokeWidth={6}
                     strokeColor="hotpink"
+                    mode="WALKING"
                     onReady={traceRouteOnReady}
                 />}
             </MapView>
