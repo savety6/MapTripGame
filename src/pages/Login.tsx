@@ -1,25 +1,74 @@
 import { StyleSheet, Text, View, KeyboardAvoidingView, TextInput, TouchableOpacity } from "react-native";
 import {useState, useEffect, } from "react";
-import { auth } from "../../firebase";
-
-type Props = {};
+import { auth, db } from "../../firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { collection, getDocs } from 'firebase/firestore/lite';
+type Props = {
+    navigation: any;
+};
 
 const Login = (props: Props) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSignUp = async () => {
-        try {    
-            const credentials = await auth.
-        (email, password)
-            console.log(credentials);
-            const user = credentials.user;
-            console.log(user);
+    const [isSignedIn, setIsSignedIn] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user) {
+                setIsSignedIn(true);
+                props.navigation.replace("Home");
+            } else {
+                setIsSignedIn(false);
+            } 
+        });
+        return unsubscribe;  
+    }, []);
+
+    const createUser = () => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                setIsSignedIn(true);
+                console.log(user);
+                props.navigation.navigate("Home");
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+                
+            });
+    }
+
+    const signIn = () => {
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                setIsSignedIn(true);
+                console.log(user);
+                props.navigation.navigate("Home");
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);           
+            });
+    }
+
+    //temp
+    const getDatabase = async () => {
+        try {
+            const monstersCol = collection(db, 'Monsters');
+            const monsterSnapshot = await getDocs(monstersCol);
+            const monsterList = monsterSnapshot.docs.map(doc => doc.data());
+            console.log(monsterList);
         } catch (error) {
             console.log(error);
-            alert(error);
         }
-    };
+    }
 
     return (
         <KeyboardAvoidingView
@@ -50,7 +99,7 @@ const Login = (props: Props) => {
             >
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={()=>{}}
+                    onPress={()=>{signIn()}}
                 >
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
@@ -60,7 +109,7 @@ const Login = (props: Props) => {
             >
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={()=>{}}
+                    onPress={()=>{createUser()}}
                 >
                     <Text style={styles.buttonText}>Register</Text>
                 </TouchableOpacity>

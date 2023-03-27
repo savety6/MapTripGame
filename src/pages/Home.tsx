@@ -1,12 +1,27 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Button } from "react-native";
 import React from "react";
+import { auth } from "../../firebase";
 
-type Props = {};
+type Props = {
+    navigation: any;
+};
 
 const Home = (props: Props) => {
+
+    const signOut = () => {
+        auth.signOut().then(() => {
+            props.navigation.replace("Login");
+        });
+    }
+
     return (
         <View>
-            <Text>Home</Text>
+            <Text>Email: {auth.currentUser?.email}</Text>
+            <Button title="Sign Out" onPress={signOut} />
+            <Text></Text>
+            <Button title="Start a game" onPress={
+                () => props.navigation.navigate("Map")
+            } />
         </View>
     );
 };
