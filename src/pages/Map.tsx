@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { StyleSheet, View, Text } from "react-native"
+import useUpdateEffect from "../hooks/useUpdateEffect"
 
 import MapView, { Marker, LatLng, Region } from "react-native-maps"
 import * as Location from "expo-location"
@@ -10,11 +11,17 @@ import { GOOGLE_MAPS_API_KEY } from "../../environment"
 
 import customStyle from "../constants/MapStile"
 
+interface distDur{
+    distance: number, 
+    duration: number 
+}
+
 export default function MapScreen() {
     const [location, setLocation] = useState<LatLng | null>(null);
     const [destination, setDestination] = useState<LatLng | null>(null);
     const [showDirections, setShowDirections] = useState<boolean>(false);
     const [permissionGranted, setPermissionGranted] = useState<boolean>(false);
+    const [distanceAndDuration, setDistanceAndDuration] = useState<distDur | null>(null);
     const MapRef = useRef<MapView>(null);
 
     useEffect(() => {
@@ -39,6 +46,16 @@ export default function MapScreen() {
         //     compareNearbyPoints(location, destination) && console.log("You are near the destination");
         // } , 1000);
     }, []);
+
+    useUpdateEffect(() => {
+        if(distanceAndDuration){
+            if (distanceAndDuration.distance > 8) {
+                alert("this is too much for begginer walkers, try to find a closer destination");
+                setDestination(null);
+            }
+
+        }
+    }, [distanceAndDuration]);
 
     function compareNearbyPoints(point1: any, point2: any) {
         if (point1 === null || point2 === null) return false;
@@ -71,6 +88,7 @@ export default function MapScreen() {
         const { distance, duration } = args;
         console.log(`Distance: ${distance} km`)
         console.log(`Duration: ${duration} min.`)
+        setDistanceAndDuration({ distance, duration });
     }
 
     const onPlaceSelect = (data: any, details: any = null) => {

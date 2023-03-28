@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, KeyboardAvoidingView, TextInput, TouchableOpaci
 import {useState, useEffect, } from "react";
 import { auth, db } from "../../firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { collection, getDocs } from 'firebase/firestore/lite';
+
 type Props = {
     navigation: any;
 };
@@ -56,18 +56,6 @@ const Login = (props: Props) => {
                 const errorMessage = error.message;
                 console.log(errorCode, errorMessage);           
             });
-    }
-
-    //temp
-    const getDatabase = async () => {
-        try {
-            const monstersCol = collection(db, 'Monsters');
-            const monsterSnapshot = await getDocs(monstersCol);
-            const monsterList = monsterSnapshot.docs.map(doc => doc.data());
-            console.log(monsterList);
-        } catch (error) {
-            console.log(error);
-        }
     }
 
     return (
