@@ -67,6 +67,10 @@ const Home = (props: Props) => {
                     <Text style={styles.monsterText}>{monster.abilityPower}</Text>
                 </View>
             ))}
+            <Button
+                title="Go to Arena"
+                onPress={() => props.navigation.navigate("Arena")}
+            />
         </View>
     );
 };
