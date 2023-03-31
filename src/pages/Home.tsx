@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Button } from "react-native";
 import {useEffect, useState, useRef} from "react";
 import { auth, db } from "../../firebase";
-import { collection, getDocs } from 'firebase/firestore/lite';
+import { collection, getDocs, setDoc, doc} from 'firebase/firestore/lite';
 
 type Props = {
     navigation: any;
@@ -48,6 +48,26 @@ const Home = (props: Props) => {
         });
     }
 
+    const addMonster = async () => {
+        try {
+            const UsersMonsters = collection(db, 'UsersMonsters');
+            await setDoc(doc(UsersMonsters, auth.currentUser?.uid), {
+                name: "Asmaron",
+                type: "wind",
+                maxLevel: 20,
+                health: 30,
+                criticalStrike: 5,
+                attackDamage: 25,
+                abilityPower: 30,
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    
+    
+
     return (
         <View>
             <Text>Email: {auth.currentUser?.email}</Text>
@@ -56,6 +76,10 @@ const Home = (props: Props) => {
             <Button title="Start a game" onPress={
                 () => props.navigation.navigate("Map")
             } />
+            <Button
+                title="Add Monster"
+                onPress={addMonster}
+            />
             {myMonsterList && myMonsterList.map((monster: Monster) => (
                 <View key={monster.name} style={styles.monster}>
                     <Text style={styles.monsterText}>{monster.name}</Text>
