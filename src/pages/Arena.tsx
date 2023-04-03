@@ -34,11 +34,11 @@ const Arena = (props: Props) => {
     return (
         <View style={styles.container}>
             <Platform type='enemy'>
-                <AsmaronLevel10/>
+                <AsmaronLevel10 type="void"/>
             </Platform>
             
             <Platform type='ally'>
-                <AsmaronLevel1 />
+                <AsmaronLevel1 type="fire"/>
             </Platform>
             <FlatList
                 style={styles.abilities}

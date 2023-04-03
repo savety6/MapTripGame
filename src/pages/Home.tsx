@@ -2,37 +2,48 @@ import { StyleSheet, Text, View, Button } from "react-native";
 import {useEffect, useState, useRef} from "react";
 import { auth, db } from "../../firebase";
 import { collection, getDocs, setDoc, doc} from 'firebase/firestore/lite';
+import useUpdateEffect from "../hooks/useUpdateEffect";
+
+import {Monster} from "../constants/MonsterInterface";
+
+//TODO: temporary imported components
+import MonsterCard from "../components/MonsterCard";
+import AsmaronLevel1 from "../components/svgs/monsters/AsmaronLevel1"
 
 type Props = {
     navigation: any;
 };
 
-interface Monster {
-    name: string;
-    type: string;
-    level: number;
-    health: number;
-    criticalStrike: number;
-    attackDamage: number;
-    abilityPower: number;
-}
-interface MonsterList {
-    monsterList: Monster[];
+function arrayIsEmpty(array: Array<any> | null) {
+    if (!Array.isArray(array)) {
+        return false;
+    }
+    if (array.length == 0) {
+        return true;
+    }
+    return false;
 }
 
 const Home = (props: Props) => {
-    const [myMonsterList, setMyMonsterList] = useState<MonsterList | null>(null);
+    const [myMonsterList, setMyMonsterList] = useState<Monster[] | null>(null);
+    
     useEffect(() => {
         getDatabase();
+        getUsersMonsters();
     }, []);
+
+    useUpdateEffect(() => {
+        if (arrayIsEmpty(myMonsterList)) {
+            console.log("empty");
+        }
+    }, [myMonsterList]);
 
     const getDatabase = async () => {
         try {
             const monstersCol = collection(db, 'Monsters');
             const monsterSnapshot = await getDocs(monstersCol);
             const monsterList: any = monsterSnapshot.docs.map(doc => doc.data());
-            console.log(monsterList, typeof monsterList);
-            const myMonsterList: MonsterList = monsterList.map((monster: Monster) => {
+            const myMonsterList: Monster[] = monsterList.map((monster: Monster) => {
                 return monster;
             });
 
@@ -47,7 +58,7 @@ const Home = (props: Props) => {
             props.navigation.replace("Login");
         });
     }
-
+    //TODO: clean up this function
     const addMonster = async () => {
         try {
             const UsersMonsters = collection(db, 'UsersMonsters');
@@ -65,6 +76,21 @@ const Home = (props: Props) => {
         }
     }
 
+    const getUsersMonsters = async () => {
+        try {
+            const UsersMonsters = collection(db, `${auth.currentUser?.uid}`);
+            const monsterSnapshot = await getDocs(UsersMonsters);
+            const monsterList: any = monsterSnapshot.docs.map(doc => doc.data());
+            const myMonsterList: Monster[] = monsterList.map((monster: Monster) => {
+                return monster;
+            });
+
+            setMyMonsterList(myMonsterList)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     
     
 
@@ -76,11 +102,15 @@ const Home = (props: Props) => {
             <Button title="Start a game" onPress={
                 () => props.navigation.navigate("Map")
             } />
+            
             <Button
-                title="Add Monster"
-                onPress={addMonster}
+                title="Go to Arena"
+                onPress={() => props.navigation.navigate("Arena")}
             />
-            {myMonsterList && myMonsterList.map((monster: Monster) => (
+            <MonsterCard>
+                <AsmaronLevel1 />
+            </MonsterCard>
+            {/* {myMonsterList && myMonsterList.map((monster: Monster) => (
                 <View key={monster.name} style={styles.monster}>
                     <Text style={styles.monsterText}>{monster.name}</Text>
                     <Text style={styles.monsterText}>{monster.type}</Text>
@@ -90,11 +120,8 @@ const Home = (props: Props) => {
                     <Text style={styles.monsterText}>{monster.attackDamage}</Text>
                     <Text style={styles.monsterText}>{monster.abilityPower}</Text>
                 </View>
-            ))}
-            <Button
-                title="Go to Arena"
-                onPress={() => props.navigation.navigate("Arena")}
-            />
+            ))} */}
+            
         </View>
     );
 };

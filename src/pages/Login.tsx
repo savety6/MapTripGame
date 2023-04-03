@@ -31,7 +31,6 @@ const Login = (props: Props) => {
                 // Signed in 
                 const user = userCredential.user;
                 setIsSignedIn(true);
-                console.log(user);
                 props.navigation.navigate("Home");
             })
             .catch((error) => {
@@ -48,7 +47,6 @@ const Login = (props: Props) => {
                 // Signed in
                 const user = userCredential.user;
                 setIsSignedIn(true);
-                console.log(user);
                 props.navigation.navigate("Home");
             })
             .catch((error) => {
