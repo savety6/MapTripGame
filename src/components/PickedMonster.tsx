@@ -9,7 +9,9 @@ import AsmaronLevel10 from "./svgs/monsters/AsmaronLevel10"
 import AsmaronLevel20 from "./svgs/monsters/AsmaronLevel20"
 
 type Props = {
-    monster: Monster;
+    monster: Monster | null;
+    isChoice?: boolean;
+    choice?: () => void;
 };
 
 const PickedMonster = (props: Props) => {
@@ -17,6 +19,7 @@ const PickedMonster = (props: Props) => {
     const [stats, setStats] = useState<Stats | null>(null);
 
     useEffect(() => {
+        if (props.monster == null) return
         if (props.monster.name == "Asmaron") {
             if (props.monster.level <= 9) {
                 setPickedMonster(<AsmaronLevel1 type={props.monster.type} />);
@@ -39,7 +42,7 @@ const PickedMonster = (props: Props) => {
 
 
     return (
-        <MonsterCard stats={stats}>
+        <MonsterCard stats={stats} isChoice={props.isChoice} choice={props.choice}>
             {pickedMonster}
         </MonsterCard>
     );

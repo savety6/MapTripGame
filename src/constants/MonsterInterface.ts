@@ -6,6 +6,7 @@ export  interface Monster {
     criticalStrike: number;
     attackDamage: number;
     abilityPower: number;
+    id: number;
 }
 export interface Stats{
     health: number;

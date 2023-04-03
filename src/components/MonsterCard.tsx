@@ -1,18 +1,18 @@
-import { StyleSheet, Text, View } from "react-native";
-import React,{FC} from "react";
-import {Stats} from "../constants/MonsterInterface";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { FC } from "react";
+import { Stats } from "../constants/MonsterInterface";
 
 type Props = {
     children?: React.ReactNode;
     stats?: Stats | null;
+    isChoice?: boolean;
+    choice?: () => void;
 };
 
 const MonsterCard = (props: Props) => {
     return (
         <View style={styles.container}>
-            <View style={styles.monsterView}>
-                {props.children}
-            </View>
+            <View style={styles.monsterView}>{props.children}</View>
             <View style={styles.statsView}>
                 <Text>Stats</Text>
                 <Text>Health: {props.stats?.health}</Text>
@@ -21,6 +21,14 @@ const MonsterCard = (props: Props) => {
                 <Text>Critical Strike: {props.stats?.criticalStrike}</Text>
                 <Text>Type: {props.stats?.type}</Text>
             </View>
+            {props.isChoice && (
+                <TouchableOpacity
+                    onPress={props.choice ? props.choice : () => {console.log( "No choice function" )}}
+                    style={styles.button}
+                >
+                    <Text>Choose</Text>
+                </TouchableOpacity>
+            )}
         </View>
     );
 };
@@ -41,6 +49,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     statsView: {
+        backgroundColor: "rgba(25,100,50,0.5)",
+        margin: 10,
+        padding: 10,
+    },
+    button: {
         backgroundColor: "rgba(25,100,50,0.5)",
         margin: 10,
         padding: 10,
