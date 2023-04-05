@@ -1,9 +1,11 @@
 import { StyleSheet, Text, Dimensions, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 
 type Props = {
     abilityName: string;
     abilityType: string;
+    ability: () => void;
+    available: boolean;
 };
 
 interface ability{
@@ -16,13 +18,11 @@ const AbilityButton = (props: Props) => {
 
     let typeStyle: any = props.abilityType == "attack" ? styles.Attack : props.abilityType == "defense" ? styles.Defense : styles.Heal;
 
-
-
-    
     return (
         <TouchableOpacity 
-            style={[styles.ability, typeStyle]}
-            onPress={() => console.log(props.abilityName)}
+            style={[styles.ability, typeStyle, {opacity: props.available ? 1 : 0.5}]}
+            onPress={props.ability}
+            disabled={!props.available}
             >
             <Text>{props.abilityName}</Text>
         </TouchableOpacity>

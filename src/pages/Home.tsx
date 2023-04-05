@@ -35,8 +35,9 @@ const Home = (props: Props) => {
     const [isChoiceMade, setIsChoiceMade] = useState<boolean>(false);
 
     useEffect(() => {
-        getDatabase();
         getUsersMonsters();
+        if (arrayIsEmpty(myMonsterList))
+        getDatabase();
     }, []);
 
     useUpdateEffect(() => {
@@ -49,6 +50,7 @@ const Home = (props: Props) => {
         try {
             const monstersCol = collection(db, "Monsters");
             const monsterSnapshot = await getDocs(monstersCol);
+            
             const monsterList: any = monsterSnapshot.docs.map((doc) =>
                 doc.data()
             );
@@ -57,7 +59,8 @@ const Home = (props: Props) => {
                     return monster;
                 }
             );
-
+            console.log(myMonsterList);
+            
             setMyMonsterList(myMonsterList);
         } catch (error) {
             console.log(error);
@@ -72,7 +75,10 @@ const Home = (props: Props) => {
 
     const getUsersMonsters = async () => {
         try {
-            const UsersMonsters = collection(db,'UsersMonsters');
+            const uid = auth.currentUser?.uid;
+            if (!uid) return;
+            
+            const UsersMonsters = collection(db,'UsersMonsters', uid, 'Monsters');
             // console.log(UsersMonsters);
             
             const monsterSnapshot = await getDocs(UsersMonsters);
@@ -82,7 +88,8 @@ const Home = (props: Props) => {
                 doc.data()
             );
             const myMonsterList: Monster[] = monsterList.map(
-                (monster: Monster) => {
+                (monster: Monster, index: number) => {
+                    monster.id = index;
                     return monster;
                 }
             );
@@ -92,6 +99,7 @@ const Home = (props: Props) => {
             console.log("gst user monsters error: ", error);
         }
     };
+
     const choice = async (monster: Monster) => {
         try {
             const uid = auth.currentUser?.uid;
@@ -135,7 +143,7 @@ const Home = (props: Props) => {
 
             <Button
                 title="Go to Arena"
-                onPress={() => props.navigation.navigate("Arena")}
+                onPress={() => props.navigation.navigate("Arena", { monsters: myMonsterList})}
             />
             <FlatList
                 data={myMonsterList}

@@ -12,6 +12,7 @@ type Props = {
     monster: Monster | null;
     isChoice?: boolean;
     choice?: () => void;
+    isNotInCard?: boolean;
 };
 
 const PickedMonster = (props: Props) => {
@@ -39,13 +40,20 @@ const PickedMonster = (props: Props) => {
         setStats(stats);
     }, []);
 
-
-
-    return (
-        <MonsterCard stats={stats} isChoice={props.isChoice} choice={props.choice}>
-            {pickedMonster}
-        </MonsterCard>
-    );
+    if (!props.isNotInCard) {
+        return (
+            <MonsterCard stats={stats} isChoice={props.isChoice} choice={props.choice}>
+                {pickedMonster}
+            </MonsterCard>
+        );  
+    }
+    else {
+        return (
+            <View>
+                {pickedMonster}
+            </View>
+        );
+    }
 };
 
 export default PickedMonster;
