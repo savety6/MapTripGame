@@ -58,7 +58,10 @@ const Arena = (props: Props) => {
         {
             name: `${monsters[0].type.toUpperCase()} Attack`,
             type: "attack",
-            ability: () => console.log("Fire Attack and Damage"),
+            ability: () => {
+                console.log("Fire Attack and Damage")
+                monsters[1].currentHealth -= monsters[0].damage;
+            },
         },
         {
             name: "Melee Attack",
