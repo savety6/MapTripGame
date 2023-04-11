@@ -8,17 +8,17 @@ import Animated, { useAnimatedProps, useSharedValue, withTiming } from "react-na
 type Props = {
     receivedValue: number;
     maxHealth: number;
+    gameover: boolean;
 };
 
 const AnimatedRect = Animated.createAnimatedComponent(Rect);
 
 const HealthBar = (props: Props) => {
     const sherdValue = useSharedValue(100);
-
+    
     useEffect(() => {
-        
-        sherdValue.value = withTiming(props.receivedValue, {duration: 1000});
-    }, []);
+        sherdValue.value = withTiming((props.receivedValue), {duration: 1000});
+    }, [ props.receivedValue]);
 
     const animatedProps = useAnimatedProps(() => {
         return {
@@ -28,7 +28,7 @@ const HealthBar = (props: Props) => {
 
     return (
         <Svg style={styles.svg}>
-            <Rect x="0" y="0" width="100" height="10" fill="grey" />
+            <Rect x="0" y="0" width={100} height="10" fill="grey" />
             <G>
                 <AnimatedRect x="0" y="0" height="10" fill="green" 
                     animatedProps={animatedProps}

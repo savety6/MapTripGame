@@ -51,7 +51,7 @@ export default function MapScreen() {
         if(distanceAndDuration){
             if (distanceAndDuration.distance > 8) {
                 alert("this is too much for begginer walkers, try to find a closer destination");
-                setDestination(null);
+                setDestination(null);   
             }
 
         }

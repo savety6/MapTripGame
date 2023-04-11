@@ -9,7 +9,7 @@ type Props = {
 
 export default function SvgComponent<FC>(props: Props) {
     return (
-        <View  style={props.type == 'ally' ? styles.platformEnemy : styles.platformAlly}>
+        <View  style={props.type == 'enemy' ? styles.platformEnemy : styles.platformAlly}>
             <>
             {props.children}
                 <Svg

@@ -1,16 +1,24 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer, RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp, createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
+
+import { Monster } from "../constants/MonsterInterface";
 
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Map from "../pages/Map";
 import Arena from "../pages/Arena";
 
-type Props = {};
+type RootStackParamList = {
+    Login: undefined;
+    Home: undefined;
+    Map: undefined;
+    Arena: { monsters: Monster[] };
+};
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const index = (props: Props) => {
+const index: React.FC = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator>
@@ -24,3 +32,4 @@ const index = (props: Props) => {
 };
 
 export default index;
+export type { RootStackParamList };
